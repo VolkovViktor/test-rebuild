@@ -11,6 +11,7 @@ use app\modules\ord\models\Order;
  */
 class OrderSearch extends Order
 {
+    public $count;
     /**
      * {@inheritdoc}
      */
@@ -41,7 +42,7 @@ class OrderSearch extends Order
     {
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
 
-
+        $this->count = $query->count('*');
 
         // add conditions that should always apply here
 

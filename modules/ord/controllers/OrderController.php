@@ -56,14 +56,7 @@ class OrderController extends Controller
             $viewService[$service['id']] = '<span style="border:1px #777777 solid;">' . $countServices[$service['id']-1]['cnt'] . ' </span>' . $service['name'];
         }
 
-
-
-        array_map(
-            'str_replace',            // callback function (str_replace)
-            ['[', ']'], // first argument    ($search)
-            ['<span style="border:1px #777777 solid;">', '</span>'], // second argument   ($replace)
-            $viewService                    // third argument    ($subject)
-        );
+        array_unshift($filterService, ['' => 'All (' . $searchModel->count . ')']);
 
         return $this->render('index', compact('searchModel', 'dataProvider', 'countServices', 'filterService', 'viewService'));
     }
