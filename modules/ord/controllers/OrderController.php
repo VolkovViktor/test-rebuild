@@ -66,6 +66,7 @@ class OrderController extends Controller
         $attr = Yii::$app->request->get();
         $arr = [0 => 'id', 1 => 'user_id', 2 => 'link'];
         //var_dump($attr['search_text']);
+        $users = (new Query())->select(['id','first_name', 'last_name'])->from('users')->all();
         $query = OrderSearch::find()->where(['like', $arr[$attr['search_attr']], $attr['search_text']]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

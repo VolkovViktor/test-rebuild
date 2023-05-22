@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
         $form1 = ActiveForm::begin(['method' => 'get', 'action' => 'index.php?r=ord/order/search']);
         echo Html::input('text', 'search_text');
-        echo Html::dropDownList('search_attr', 'user_id', ['id', 'user_id', 'link']);
+        echo Html::dropDownList('search_attr', 'id', ['id', 'user', 'link']);
         echo Html::submitButton('Search');
         ActiveForm::end();
     ?>
