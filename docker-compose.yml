@@ -1,0 +1,53 @@
+version: '3'
+services:
+  php:
+    container_name: php
+    build:
+      context: ./docker/php
+    volumes:
+      - './:/var/www/html'
+    depends_on:
+      - mysql
+    ports:
+      - 9000:9000
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - './:/var/www/html'
+      - './docker/nginx/conf.d:/etc/nginx/conf.d'
+    links:
+      - php:waapi_php_1
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    environment:
+      - MYSQL_DATABASE=test_db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+      - DB_HOST=mysql
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - "./docker/mysql:/var/lib/mysql"
+    networks:
+      - default
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8888:80'
+    environment:
+      UPLOAD_LIMIT: 50M
+      PMA_HOSTS: mysql
+    depends_on:
+      - mysql
