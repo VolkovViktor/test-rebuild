@@ -4,8 +4,10 @@ namespace app\modules\ord\controllers;
 
 use Yii;
 use app\modules\ord\models\Order;
-use app\modules\ord\models\Services;
 use app\modules\ord\models\OrderSearch;
+use app\modules\ord\models\Services;
+use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,7 +27,7 @@ class OrderController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -43,101 +45,47 @@ class OrderController extends Controller
     {
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        //$countServices = (new \yii\db\Query())->select(['name','COUNT(*) as cnt'])->from('services')->groupBy(['name'])->all();
-        $countServices = Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
-        //var_dump($countServices);
-        $services = Services::find()->all();
-        //var_dump($services)
+        $countServices = (new Query())->select(['service_id','COUNT(*) as cnt'])->from('orders')->groupBy(['service_id'])->all(); //$countServices = Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
+
+        $services = (new Query())->select(['id','name'])->from('services')->all();
+
         $filterService = [];
-        for ($i = 0; $i <= count($services); $i++) {
-            $filterService[$i] = '|' . $countServices[$i]['cnt'] . '|' . $services[$countServices[$i]['service_id']-1]['name'];
+        $viewService = [];
+        foreach ($services as $service) {
+            $filterService[$service['id']] = '[' . $countServices[$service['id']-1]['cnt'] . '] ' . $service['name'];
+            $viewService[$service['id']] = '<span style="border:1px #777777 solid;">' . $countServices[$service['id']-1]['cnt'] . ' </span>' . $service['name'];
         }
 
-        return $this->render('index', compact('searchModel', 'dataProvider', 'countServices', 'filterService'));
+
+
+        array_map(
+            'str_replace',            // callback function (str_replace)
+            ['[', ']'], // first argument    ($search)
+            ['<span style="border:1px #777777 solid;">', '</span>'], // second argument   ($replace)
+            $viewService                    // third argument    ($subject)
+        );
+
+        return $this->render('index', compact('searchModel', 'dataProvider', 'countServices', 'filterService', 'viewService'));
     }
 
-    /**
-     * Displays a single Order model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
+    public function actionSearch()
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $attr = Yii::$app->request->get();
+        $arr = [0 => 'id', 1 => 'user_id', 2 => 'link'];
+        //var_dump($attr['search_text']);
+        $query = OrderSearch::find()->where(['like', $arr[$attr['search_attr']], $attr['search_text']]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ],
         ]);
+        return $this->render('index', compact('dataProvider'));
     }
 
-    /**
-     * Creates a new Order model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new Order();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing Order model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Order model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Order model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Order the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Order::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
 }

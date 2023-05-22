@@ -1,6 +1,7 @@
 <?php
 
 use app\assets\OrderAsset;
+use app\modules\ord\models\Services;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -23,26 +24,34 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>   
-        <?= Html::a('All Orders', ['index']) ?> 
-        <?= Html::a('Prompt', ['index', 'OrderSearch[status]' => '1']) ?>
-        <?= Html::a('In progress', ['index', 'OrderSearch[status]' => '2']) ?>
-        <?= Html::a('Completed', ['index', 'OrderSearch[status]' => '3']) ?> 
-        <?= Html::a('Canceled', ['index', 'OrderSearch[status]' => '4']) ?> 
-        <?= Html::a('Error', ['index', 'OrderSearch[status]' => '5']) ?> 
+    <?php
+        $form1 = ActiveForm::begin(['method' => 'get', 'action' => 'index.php?r=ord/order/search']);
+        echo Html::input('text', 'search_text');
+        echo Html::dropDownList('search_attr', 'user_id', ['id', 'user_id', 'link']);
+        echo Html::submitButton('Search');
+        ActiveForm::end();
+    ?>
+
+    <p>
+        <?= Html::a('All Orders', ['index']) ?>
+        <?= Html::a('Pending', ['index', 'OrderSearch[status]' => 1]) ?>
+        <?= Html::a('In progress', ['index', 'OrderSearch[status]' => 2]) ?>
+        <?= Html::a('Completed', ['index', 'OrderSearch[status]' => 3]) ?>
+        <?= Html::a('Canceled', ['index', 'OrderSearch[status]' => 4]) ?>
+        <?= Html::a('Error', ['index', 'OrderSearch[status]' => 0]) ?>
     </p>
 
-    <?php  // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            
+            //['class' => 'yii\grid\SerialColumn'],
+
             [
                 'header' => 'ID',
-                'attribute'=>'id',
+                'attribute' => 'id',
             ],
             [
                 'header' => 'User',
@@ -50,36 +59,48 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'header' => 'Link',
-                'attribute'=>'link',
+                'attribute' => 'link',
             ],
             [
                 'header' => 'Quantity',
-                'attribute'=>'quantity',
+                'attribute' => 'quantity',
             ],
             [
                 'header' => 'Service',
                 'attribute' => 'service_id',
-                'content' => function($data) use ($countServices, $filterService) {
-                    $services = \app\modules\ord\models\Services::find()->all();
-                    //var_dump($services);
-                    //var_dump$services = \app\modules\ord\models\Services::find();($services['id']);
+                'content' => function ($data) use ($viewService) {
                     //return '<span style="border:1px #777777 solid;">' . $countServices[$data['service_id']-1]['cnt'] . '</span>' . $services[$data['service_id']-1]['name'] ;
-                    return $filterService[$data['service_id']];
+                    return $viewService[$data['service_id']];
                 },
                 'filter' => $filterService,
             ],
             [
                 'header' => 'Status',
-                'attribute'=>'status',
+                'attribute' => 'status',
                 'filter' => false,
+                'value' => function ($data) {
+                    $status = $data['status'];
+                    $arr = array(
+                        1 => 'Pending',
+                        2 => 'In progress',
+                        3 => 'Completed',
+                        4 => 'Canceled',
+                        0 => 'Error',
+                    );
+                    return $arr[$status];
+                },
             ],
-            [   'header' => '__Mode__',
+            ['header' => '__Mode__',
                 'attribute' => 'mode',
                 'filter' => ['' => 'All', '0' => 'Manual', '1' => 'Auto'],
+                'value' => function ($data) {
+                    return ($data['mode'] == 0) ? 'Manual' : 'Auto';
+                }
             ],
             [
                 'header' => 'Created',
-                'attribute'=>'created_at',
+                'attribute' => 'created_at',
+                'format' => ['date', 'php: d.m.Y <\b\\r> H:i:s'],
             ],
             /*
             [
@@ -91,6 +112,6 @@ $this->params['breadcrumbs'][] = $this->title;
             */
         ],
     ]); ?>
-    
+
 
 </div>
