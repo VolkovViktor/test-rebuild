@@ -49,7 +49,6 @@ class OrderController extends Controller
         $viewService = $filterParams[2];
         $attr = $filterParams[3];
         $status = $filterParams[4];
-        $users = (new Query())->select(['id','first_name', 'last_name'])->from('users')->all();
         //var_dump($attr);
         $dataProvider = $searchModel->search($attr);
         return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService', 'status'));
