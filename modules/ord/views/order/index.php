@@ -4,7 +4,7 @@ use app\assets\OrderAsset;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
-use Yii;
+//use Yii;
 
 
 /** @var yii\web\View $this */
@@ -17,7 +17,7 @@ $bundle = OrderAsset::register($this);
 
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
-$status = Yii::$app->request->getQuery('status_id');
+//$status = Yii::$app->request->getQuery('status_id');
 
 ?>
 <div class="order-index">
