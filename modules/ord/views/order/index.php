@@ -17,7 +17,7 @@ $bundle = OrderAsset::register($this);
 
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
-//var_dump($status);
+var_dump($status);
 ?>
 <div class="order-index">
 
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div style="float: right;">
         <?php
-            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/index"]); //add status !!!!!!!!!!!!!!!
+            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/index&status={$status}&OrderSearch[status]={$status}"]); //add status !!!!!!!!!!!!!!!
             echo Html::input('text', 'search_text');
             echo Html::dropDownList('search_attr', 'id', ['id', 'user_last_name', 'user_first_name', 'link']);
             echo Html::submitButton('Search');

@@ -39,15 +39,16 @@ class OrderSearch extends Order
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $status)
     {
+        //var_dump($status);
         $arr = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
         if (isset($params['search_text'])) {
             $query->andFilterWhere(['like', $arr[$params['search_attr']], $params['search_text']]);
         }
-        if (isset($params['status'])) {
-            $query->andFilterWhere(['status' => $params['status']]);
+        if ($status != null) {
+            $query->andFilterWhere(['status' => $status]);
         }
         $this->count = $query->count('*');
 

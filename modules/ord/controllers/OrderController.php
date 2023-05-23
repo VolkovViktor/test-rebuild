@@ -49,8 +49,8 @@ class OrderController extends Controller
         $viewService = $filterParams[2];
         $attr = $filterParams[3];
         $status = $filterParams[4];
-        //var_dump($attr);
-        $dataProvider = $searchModel->search($attr);
+        //var_dump($status);
+        $dataProvider = $searchModel->search($attr, $status);
         return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService', 'status'));
     }
 
