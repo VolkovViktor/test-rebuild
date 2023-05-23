@@ -1,36 +1,38 @@
 <?php
 
 use app\assets\OrderAsset;
-use app\modules\ord\models\Services;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
-use kartik\tree\TreeViewInput;
+use Yii;
+
 
 /** @var yii\web\View $this */
 /** @var app\modules\ord\models\OrderSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var app\modules\ord\controllers\OrderController $filterService */
+/** @var app\modules\ord\controllers\OrderController $viewService */
 
 $bundle = OrderAsset::register($this);
 
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
+$status = Yii::$app->request->getQuery('status_id');
+
 ?>
 <div class="order-index">
 
-    <?php var_dump($filterService); ?>
-
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php
-        $form1 = ActiveForm::begin(['method' => 'get', 'action' => 'index.php?r=ord/order/search']);
-        echo Html::input('text', 'search_text');
-        echo Html::dropDownList('search_attr', 'id', ['id', 'user', 'link']);
-        echo Html::submitButton('Search');
-        ActiveForm::end();
-    ?>
+    <div style="float: right;">
+        <?php
+            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/search"]); //add status !!!!!!!!!!!!!!!
+            echo Html::input('text', 'search_text');
+            echo Html::dropDownList('search_attr', 'id', ['id', 'user', 'link']);
+            echo Html::submitButton('Search');
+            ActiveForm::end();
+        ?>
+    </div>
 
     <p>
         <?= Html::a('All Orders', ['index']) ?>
@@ -69,7 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'header' => 'Service',
                 'attribute' => 'service_id',
                 'content' => function ($data) use ($viewService) {
-                    //return '<span style="border:1px #777777 solid;">' . $countServices[$data['service_id']-1]['cnt'] . '</span>' . $services[$data['service_id']-1]['name'] ;
                     return $viewService[$data['service_id']];
                 },
                 'filter' => $filterService,
