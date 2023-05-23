@@ -4,7 +4,7 @@ use app\assets\OrderAsset;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
-//use Yii;
+
 
 
 /** @var yii\web\View $this */
@@ -17,8 +17,7 @@ $bundle = OrderAsset::register($this);
 
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
-//$status = Yii::$app->request->getQuery('status_id');
-
+//var_dump($status);
 ?>
 <div class="order-index">
 
@@ -26,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div style="float: right;">
         <?php
-            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/search"]); //add status !!!!!!!!!!!!!!!
+            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/index"]); //add status !!!!!!!!!!!!!!!
             echo Html::input('text', 'search_text');
             echo Html::dropDownList('search_attr', 'id', ['id', 'user', 'link']);
             echo Html::submitButton('Search');
@@ -43,8 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Error', ['index', 'OrderSearch[status]' => 0]) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -54,6 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'header' => 'ID',
                 'attribute' => 'id',
+                'filter' => false,
             ],
             [
                 'header' => 'User',
@@ -62,6 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'header' => 'Link',
                 'attribute' => 'link',
+                'filter' => false,
             ],
             [
                 'header' => 'Quantity',

@@ -48,37 +48,18 @@ class OrderController extends Controller
         $filterService = $filterParams[1];
         $viewService = $filterParams[2];
         $attr = $filterParams[3];
-        $dataProvider = $searchModel->search($attr);
-        return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService'));
-    }
-
-    public function actionSearch()
-    {
-        $filterParams = $this->actionGetSearchParams();
-        $searchModel = $filterParams[0];
-        $filterService = $filterParams[1];
-        $viewService = $filterParams[2];
-        $attr = $filterParams[3];;
-        $arr = [0 => 'id', 1 => 'user_id', 2 => 'link'];
+        $status = $filterParams[4];
         $users = (new Query())->select(['id','first_name', 'last_name'])->from('users')->all();
-        $query = OrderSearch::find()->where(['like', $arr[$attr['search_attr']], $attr['search_text']])->andWhere(['status' => $attr['status']]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 100,
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ],
-            ],
-        ]);
-        return $this->render('index', compact('dataProvider', 'filterService', 'viewService'));
+        //var_dump($attr);
+        $dataProvider = $searchModel->search($attr);
+        return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService', 'status'));
     }
 
     public function actionGetSearchParams() {
         $searchModel = new OrderSearch();
         $attr = Yii::$app->request->get();
+        $status = $attr['OrderSearch']['status'];
+        //var_dump($status);
         $countAll = Order::find()->count('*');
         $countServices = (new Query())->select(['service_id','COUNT(*) as cnt'])->from('orders')->groupBy(['service_id'])->all(); //$countServices = Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
 
@@ -92,7 +73,7 @@ class OrderController extends Controller
         }
 
         array_unshift($filterService, ['' => 'All (' . $countAll . ')']);
-        return array($searchModel, $filterService, $viewService, $attr);
+        return array($searchModel, $filterService, $viewService, $attr, $status);
     }
 
 }

@@ -18,7 +18,8 @@ class OrderSearch extends Order
     public function rules()
     {
         return [
-            [['service_id', 'status', 'mode'], 'integer'],
+            [['id','service_id', 'user_id', 'status', 'mode'], 'integer'],
+            [['link'], 'safe'],
         ];
     }
 
@@ -40,8 +41,14 @@ class OrderSearch extends Order
      */
     public function search($params)
     {
+        $arr = [0 => 'id', 1 => 'user_id', 2 => 'link'];
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
-
+        if (isset($params['search_text'])) {
+            $query->andFilterWhere(['like', 'orders.' . $arr[$params['search_attr']], $params['search_text']]);
+        }
+        if (isset($params['status'])) {
+            $query->andFilterWhere(['status' => $params['status']]);
+        }
         $this->count = $query->count('*');
 
         // add conditions that should always apply here
@@ -68,16 +75,16 @@ class OrderSearch extends Order
 
         // grid filtering conditions
         $query->andFilterWhere([
-            //'id' => $this->id,
-            //'user_id' => $this->user_id,
-            //'quantity' => $this->quantity,
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'quantity' => $this->quantity,
             'service_id' => $this->service_id,
             'status' => $this->status,
-            //'created_at' => $this->created_at,
+            'created_at' => $this->created_at,
             'mode' => $this->mode,
         ]);
 
-        //$query->andFilterWhere(['like', 'link', $this->link]);
+        $query->andFilterWhere(['like', 'link', $this->link]);
 
         return $dataProvider;
     }
