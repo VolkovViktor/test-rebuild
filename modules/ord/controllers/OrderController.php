@@ -5,11 +5,8 @@ namespace app\modules\ord\controllers;
 use Yii;
 use app\modules\ord\models\Order;
 use app\modules\ord\models\OrderSearch;
-use app\modules\ord\models\Services;
-use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 
@@ -49,8 +46,7 @@ class OrderController extends Controller
         $viewService = $filterParams[2];
         $attr = $filterParams[3];
         $status = $filterParams[4];
-        //var_dump($status);
-        $dataProvider = $searchModel->search($attr, $status);
+        $dataProvider = $searchModel->search($attr);
         return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService', 'status'));
     }
 
@@ -58,7 +54,6 @@ class OrderController extends Controller
         $searchModel = new OrderSearch();
         $attr = Yii::$app->request->get();
         $status = $attr['OrderSearch']['status'];
-        //var_dump($status);
         $countAll = Order::find()->count('*');
         $countServices = (new Query())->select(['service_id','COUNT(*) as cnt'])->from('orders')->groupBy(['service_id'])->all(); //$countServices = Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
 

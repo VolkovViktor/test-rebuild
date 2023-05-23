@@ -39,8 +39,8 @@ class OrderSearch extends Order
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $status)
-    {
+    public function search($params)
+    {   $status = $params['status'];
         //var_dump($status);
         $arr = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
@@ -51,8 +51,6 @@ class OrderSearch extends Order
             $query->andFilterWhere(['status' => $status]);
         }
         $this->count = $query->count('*');
-
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -69,12 +67,9 @@ class OrderSearch extends Order
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'user_id' => $this->user_id,
