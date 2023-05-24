@@ -5,7 +5,7 @@ services:
     build:
       context: ./docker/php
     volumes:
-      - './:/var/www/html'
+      - './:/var/www/html/'
     depends_on:
       - mysql
     ports:
@@ -17,10 +17,12 @@ services:
     ports:
       - 80:80
     volumes:
-      - './:/var/www/html'
+      - './:/var/www/html/web'
       - './docker/nginx/conf.d:/etc/nginx/conf.d'
     links:
       - php:waapi_php_1
+
+
 
   mysql:
     container_name: mysql

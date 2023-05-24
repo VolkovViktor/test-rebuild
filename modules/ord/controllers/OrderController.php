@@ -16,24 +16,6 @@ use yii\filters\VerbFilter;
 class OrderController extends Controller
 {
     /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
-    /**
      * Lists all Order models.
      *
      * @return string
@@ -50,6 +32,11 @@ class OrderController extends Controller
         return $this->render('index', compact('searchModel', 'dataProvider', 'filterService', 'viewService', 'status'));
     }
 
+    /**
+     * Lists all Order models.
+     *
+     * @return array
+     */
     public function actionGetSearchParams() {
         $searchModel = new OrderSearch();
         $attr = Yii::$app->request->get();

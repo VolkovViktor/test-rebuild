@@ -42,10 +42,10 @@ class OrderSearch extends Order
     public function search($params)
     {   $status = $params['status'];
         //var_dump($status);
-        $arr = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
+        $searchQueryParams = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
         if (isset($params['search_text'])) {
-            $query->andFilterWhere(['like', $arr[$params['search_attr']], $params['search_text']]);
+            $query->andFilterWhere(['like', $searchQueryParams[$params['search_attr']], $params['search_text']]);
         }
         if ($status != null) {
             $query->andFilterWhere(['status' => $status]);

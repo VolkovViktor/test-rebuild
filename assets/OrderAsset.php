@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
 
 class OrderAsset extends AssetBundle
 {
-    public $sourcePath = '@app/modules/ord/views/order';
+    public $sourcePath = '@app/modules/ord/web/themes';
     public $css = [
         'css/custom.css',
         'css/bootstrap.min.css'
