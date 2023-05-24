@@ -5,6 +5,7 @@ namespace app\modules\ord\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\ord\models\Order;
+use yii\db\Query;
 
 /**
  * OrderSearch represents the model behind the search form of `app\modules\ord\models\Order`.
@@ -51,6 +52,7 @@ class OrderSearch extends Order
             $query->andFilterWhere(['status' => $status]);
         }
         $this->count = $query->count('*');
+        //var_dump($this->count);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -83,5 +85,17 @@ class OrderSearch extends Order
         $query->andFilterWhere(['like', 'link', $this->link]);
 
         return $dataProvider;
+    }
+
+    public function getAllOrdersCount() {
+        return (new Query())->select(['COUNT(*) as cnt'])->from('orders')->all()[0]['cnt'];
+    }
+
+    public function getCountServices() {
+        return (new Query())->select(['service_id','COUNT(*) as cnt'])->from('orders')->groupBy(['service_id'])->all(); // alter command: Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
+    }
+
+    public function getServices() {
+        return (new Query())->select(['id','name'])->from('services')->all();
     }
 }

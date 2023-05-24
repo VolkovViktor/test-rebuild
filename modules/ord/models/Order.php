@@ -4,6 +4,7 @@ namespace app\modules\ord\models;
 
 use Yii;
 use \yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * This is the model class for table "orders".
@@ -19,6 +20,7 @@ use \yii\db\ActiveRecord;
  */
 class Order extends ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -62,5 +64,9 @@ class Order extends ActiveRecord
 
     public function getServices() {
         return $this->hasOne(Services::class, ['id' => 'service_id']);
-    } 
+    }
+
+    public function getCountOrders() {
+        return (new Query())->select(['COUNT(*) as cnt'])->from('orders')->all()[0]['cnt'];
+    }
 }

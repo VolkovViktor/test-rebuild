@@ -18,6 +18,15 @@ $bundle = OrderAsset::register($this);
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
 
+$filterService = [];
+$viewService = [];
+foreach ($services as $service) {
+    $filterService[$service['id']] = '[' . $countServices[$service['id']-1]['cnt'] . '] ' . $service['name'];
+    $viewService[$service['id']] = '<span style="border:1px #777777 solid;">' . $countServices[$service['id']-1]['cnt'] . ' </span>' . $service['name'];
+}
+
+array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
+
 ?>
 <div class="order-index">
 
