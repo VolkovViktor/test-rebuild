@@ -5,7 +5,7 @@ namespace app\modules\ord\controllers;
 use Yii;
 use app\modules\ord\models\OrderSearch;
 use yii\web\Controller;
-
+use yii\web\HttpException;
 
 
 /**
@@ -22,6 +22,9 @@ class OrderController extends Controller
     {
         $searchModel = new OrderSearch();
         $attr = Yii::$app->request->get();
+        if (!$searchModel->validate()) {
+            throw new HttpException(400);
+        }
         $status = $attr['OrderSearch']['status'];
         $countAllOrders = $searchModel->getAllOrdersCount();
         $countServices = $searchModel->getCountServices();
@@ -29,6 +32,5 @@ class OrderController extends Controller
         $dataProvider = $searchModel->search($attr);
         return $this->render('index', compact('searchModel', 'dataProvider', 'services', 'countServices', 'countAllOrders', 'status'));
     }
-
 
 }

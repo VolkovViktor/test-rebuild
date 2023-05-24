@@ -15,6 +15,7 @@ use yii\widgets\ActiveForm;
 /** @var app\modules\ord\controllers\OrderController $services */
 /** @var app\modules\ord\controllers\OrderController $countServices */
 /** @var app\modules\ord\controllers\OrderController $countAllOrders */
+/** @var app\modules\ord\controllers\OrderController $status */
 
 $bundle = OrderAsset::register($this);
 

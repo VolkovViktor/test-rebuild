@@ -18,8 +18,34 @@ class OrderSearch extends Order
     {
         return [
             [['id','service_id', 'user_id', 'status', 'mode'], 'integer'],
+            [['status'], 'validateStatus'],
+            [['mode'], 'validateMode'],
             [['link'], 'safe'],
         ];
+    }
+
+    /**
+     * Rule for status.
+     *
+     * @param integer
+     */
+    public function validateStatus($attribute, $params)
+    {
+        if (!in_array($this->$attribute, [0, 1, 2, 3, 4])) {
+            $this->addError($attribute, 'Parameter "status" do not valid.');
+        }
+    }
+
+    /**
+     * Rule for mode.
+     *
+     * @param integer
+     */
+    public function validateMode($attribute, $params)
+    {
+        if (!in_array($this->$attribute, [0, 1])) {
+            $this->addError($attribute, 'Parameter "mode" do not valid.');
+        }
     }
 
     /**
