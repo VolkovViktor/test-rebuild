@@ -65,8 +65,4 @@ class Order extends ActiveRecord
     public function getServices() {
         return $this->hasOne(Services::class, ['id' => 'service_id']);
     }
-
-    public function getCountOrders() {
-        return (new Query())->select(['COUNT(*) as cnt'])->from('orders')->all()[0]['cnt'];
-    }
 }

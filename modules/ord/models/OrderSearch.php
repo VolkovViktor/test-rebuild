@@ -4,7 +4,6 @@ namespace app\modules\ord\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\ord\models\Order;
 use yii\db\Query;
 
 /**
@@ -12,7 +11,6 @@ use yii\db\Query;
  */
 class OrderSearch extends Order
 {
-    public $count;
     /**
      * {@inheritdoc}
      */
@@ -41,18 +39,18 @@ class OrderSearch extends Order
      * @return ActiveDataProvider
      */
     public function search($params)
-    {   $status = $params['status'];
-        //var_dump($status);
+    {
+        $status = $params['status'];
         $searchQueryParams = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
+
         $query = Order::find()->innerJoinWith('users', true)->innerJoinWith('services', true);
         if (isset($params['search_text'])) {
             $query->andFilterWhere(['like', $searchQueryParams[$params['search_attr']], $params['search_text']]);
         }
+
         if ($status != null) {
             $query->andFilterWhere(['status' => $status]);
         }
-        $this->count = $query->count('*');
-        //var_dump($this->count);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -87,14 +85,29 @@ class OrderSearch extends Order
         return $dataProvider;
     }
 
+    /**
+     * All count orders.
+     *
+     * @return integer
+     */
     public function getAllOrdersCount() {
         return (new Query())->select(['COUNT(*) as cnt'])->from('orders')->all()[0]['cnt'];
     }
 
+    /**
+     * List counts services.
+     *
+     * @return array
+     */
     public function getCountServices() {
         return (new Query())->select(['service_id','COUNT(*) as cnt'])->from('orders')->groupBy(['service_id'])->all(); // alter command: Yii::$app->db->createCommand('SELECT service_id, COUNT(*) as cnt FROM orders GROUP BY service_id')->queryAll();
     }
 
+    /**
+     * List services.
+     *
+     * @return array
+     */
     public function getServices() {
         return (new Query())->select(['id','name'])->from('services')->all();
     }
