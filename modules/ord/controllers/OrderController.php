@@ -6,7 +6,7 @@ use Yii;
 use app\modules\ord\models\OrderSearch;
 use yii\web\Controller;
 use yii\web\HttpException;
-
+//var_dump(Yii::$app->request->resolve());
 
 /**
  * OrderController implements the CRUD actions for Order model.
