@@ -4,6 +4,7 @@ namespace app\modules\ord\controllers;
 
 use Yii;
 use app\modules\ord\models\OrderSearch;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 
 /**
@@ -11,6 +12,21 @@ use yii\web\Controller;
  */
 class OrderController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'index'  => ['GET'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * Lists all Order models.
      *
