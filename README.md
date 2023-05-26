@@ -22,6 +22,6 @@
         <p><code> docker-compose up -d </code></p>       
         Эта команда скачает все необходимые зависимости, поднимет контейнер на порту 8000, и API будет готов к работе.
     </p>
-    <h4> Теперь API доступен по адресу http://localhost/web/orders/.</h4>
+    <h4> Теперь API доступен по адресу http://localhost/orders/.</h4>
 <br>
 <br>
