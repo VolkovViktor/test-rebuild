@@ -2,9 +2,7 @@
 
 namespace app\modules\ord\models;
 
-use Yii;
 use \yii\db\ActiveRecord;
-use yii\db\Query;
 
 /**
  * This is the model class for table "orders".

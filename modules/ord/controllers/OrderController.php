@@ -5,8 +5,6 @@ namespace app\modules\ord\controllers;
 use Yii;
 use app\modules\ord\models\OrderSearch;
 use yii\web\Controller;
-use yii\web\HttpException;
-//var_dump(Yii::$app->request->resolve());
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -26,7 +24,6 @@ class OrderController extends Controller
         $searchModel->validate();
         $filterParams = $searchModel->getFilters($attr);
         $dataProvider = $searchModel->search($attr);
-
         return $this->render('index', compact('searchModel', 'dataProvider', 'filterParams'));
     }
 

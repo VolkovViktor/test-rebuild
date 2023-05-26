@@ -53,12 +53,13 @@ $config = [
         'db' => $db,
 
         'urlManager' => [
-            //'enablePrettyUrl' => true,
+            'enablePrettyUrl' => true,
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => [
                 //'/ord/order' => 'orders',
-                'orders' => '/ord/order',
+                'orders' => '/ord/order/index',
+//                'orders'=>'orders/orders/index',
             ],
         ],
 

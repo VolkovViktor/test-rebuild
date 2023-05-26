@@ -31,12 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <p>
-        <?= Html::a('All Orders', ['index']) ?>
-        <?= Html::a('Pending', ['index', 'OrderSearch[status]' => 1]) ?>
-        <?= Html::a('In progress', ['index', 'OrderSearch[status]' => 2]) ?>
-        <?= Html::a('Completed', ['index', 'OrderSearch[status]' => 3]) ?>
-        <?= Html::a('Canceled', ['index', 'OrderSearch[status]' => 4]) ?>
-        <?= Html::a('Error', ['index', 'OrderSearch[status]' => 0]) ?>
+        <?php foreach ($filterParams['statuses'] as $key => $value): ?>
+            <?= Html::a($value, ['index', 'OrderSearch[status]' => $key]) ?>
+        <?php endforeach; ?>
     </p>
 
     <?= GridView::widget([
@@ -73,24 +70,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'header' => 'Status',
                 'attribute' => 'status',
                 'filter' => false,
-                'value' => function ($data) {
-                    $status = $data['status'];
-                    $arr = array(
-                        1 => 'Pending',
-                        2 => 'In progress',
-                        3 => 'Completed',
-                        4 => 'Canceled',
-                        0 => 'Error',
-                    );
-                    return $arr[$status];
+                'value' => function ($data) use ($filterParams)  {
+                    return $filterParams['statuses'][$data['status']];
                 },
             ],
             ['header' => '__Mode__',
                 'attribute' => 'mode',
-                'filter' => ['' => 'All', '0' => 'Manual', '1' => 'Auto'],
-                'value' => function ($data) {
-                    return ($data['mode'] == 0) ? 'Manual' : 'Auto';
-                }
+                'filter' => $filterParams['modes'],
+                'value' => function ($data) use ($filterParams)  {
+                    return $filterParams['modes'][$data['mode']];
+                },
             ],
             [
                 'header' => 'Created',

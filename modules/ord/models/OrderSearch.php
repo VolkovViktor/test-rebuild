@@ -12,6 +12,16 @@ use yii\web\HttpException;
  */
 class OrderSearch extends Order
 {
+    const STATUS_PENDING = 1;
+    const STATUS_IN_PROGRESS = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_CANCELED = 4;
+    const STATUS_ERROR = 0;
+
+    const MODE_MANUAL = 0;
+    const MODE_AUTO = 1;
+
+
     /**
      * {@inheritdoc}
      */
@@ -19,34 +29,10 @@ class OrderSearch extends Order
     {
         return [
             [['id','service_id', 'user_id', 'status', 'mode'], 'integer'],
-            [['status'], 'validateStatus'],
-            [['mode'], 'validateMode'],
+            [['status'], 'in', 'range' => array_keys($this->getStatuses())],
+            [['mode'], 'in', 'range' => array_keys($this->getModes())],
             [['link'], 'safe'],
         ];
-    }
-
-    /**
-     * Rule for status.
-     *
-     * @param integer
-     */
-    public function validateStatus($attribute, $params)
-    {
-        if (!in_array($this->$attribute, [0, 1, 2, 3, 4])) {
-            $this->addError($attribute, 'Parameter "status" do not valid.');
-        }
-    }
-
-    /**
-     * Rule for mode.
-     *
-     * @param integer
-     */
-    public function validateMode($attribute, $params)
-    {
-        if (!in_array($this->$attribute, [0, 1])) {
-            $this->addError($attribute, 'Parameter "mode" do not valid.');
-        }
     }
 
     /**
@@ -113,6 +99,37 @@ class OrderSearch extends Order
     }
 
     /**
+     * List statuces.
+     *
+     * @return array
+     */
+    public function getStatuses()
+    {
+        return [
+            '' => 'All Orders',
+            static::STATUS_PENDING => 'Pending',
+            static::STATUS_IN_PROGRESS => 'In progress',
+            static::STATUS_COMPLETED => 'Completed',
+            static::STATUS_CANCELED => 'Canceled',
+            static::STATUS_ERROR => 'Error',
+        ];
+    }
+
+    /**
+     * List modes.
+     *
+     * @return array
+     */
+    public function getModes()
+    {
+        return [
+            '' => 'All',
+            static::MODE_MANUAL => 'Manual',
+            static::MODE_AUTO => 'Auto',
+        ];
+    }
+
+    /**
      * All count orders.
      *
      * @return integer
@@ -151,7 +168,6 @@ class OrderSearch extends Order
         $countAllOrders = $this->getAllOrdersCount();
         $countServices = $this->getCountServices();
         $services = $this->getServices();
-
         $filterService = [];
         $viewService = [];
         foreach ($services as $service) {
@@ -161,6 +177,8 @@ class OrderSearch extends Order
         array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
 
         return [
+                    'modes' => $this->getModes(),
+                    'statuses' => $this->getStatuses(),
                     'status' => $status,
                     'filterService' => $filterService,
                     'viewService' => $viewService,
