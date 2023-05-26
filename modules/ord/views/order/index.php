@@ -8,26 +8,12 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\modules\ord\models\OrderSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var app\modules\ord\controllers\OrderController $filterService */
-/** @var app\modules\ord\controllers\OrderController $viewService */
-/** @var app\modules\ord\controllers\OrderController $services */
-/** @var app\modules\ord\controllers\OrderController $countServices */
-/** @var app\modules\ord\controllers\OrderController $countAllOrders */
-/** @var app\modules\ord\controllers\OrderController $status */
+/** @var app\modules\ord\controllers\OrderController $filterParams */
 
 $bundle = OrderAsset::register($this);
 
 $this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
-
-$filterService = [];
-$viewService = [];
-foreach ($services as $service) {
-    $filterService[$service['id']] = '[' . $countServices[$service['id']-1]['cnt'] . '] ' . $service['name'];
-    $viewService[$service['id']] = '<span style="border:1px #777777 solid;">' . $countServices[$service['id']-1]['cnt'] . ' </span>' . $service['name'];
-}
-
-array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
 
 ?>
 <div class="order-index">
@@ -36,7 +22,7 @@ array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
 
     <div style="float: right;">
         <?php
-            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/index&OrderSearch[status]={$status}"]); //add status !!!!!!!!!!!!!!!
+            $form1 = ActiveForm::begin(['method' => 'get', 'action' => "index.php?r=ord/order/index&OrderSearch[status]={$filterParams['status']}"]); //add status !!!!!!!!!!!!!!!
             echo Html::input('text', 'search_text');
             echo Html::dropDownList('search_attr', 'id', ['id', 'user_last_name', 'user_first_name', 'link']);
             echo Html::submitButton('Search');
@@ -57,8 +43,6 @@ array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            //['class' => 'yii\grid\SerialColumn'],
-
             [
                 'header' => 'ID',
                 'attribute' => 'id',
@@ -80,10 +64,10 @@ array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
             [
                 'header' => 'Service',
                 'attribute' => 'service_id',
-                'content' => function ($data) use ($viewService) {
-                    return $viewService[$data['service_id']];
+                'content' => function ($data) use ($filterParams) {
+                    return $filterParams['viewService'][$data['service_id']];
                 },
-                'filter' => $filterService,
+                'filter' => $filterParams['filterService'],
             ],
             [
                 'header' => 'Status',
@@ -113,14 +97,6 @@ array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
                 'attribute' => 'created_at',
                 'format' => ['date', 'php: d.m.Y <\b\\r> H:i:s'],
             ],
-            /*
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Order $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-            */
         ],
     ]); ?>
 

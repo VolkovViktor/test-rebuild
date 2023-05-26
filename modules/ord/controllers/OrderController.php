@@ -21,15 +21,13 @@ class OrderController extends Controller
     public function actionIndex()
     {
         $this->layout = '@app/modules/ord/views/layouts/main';
+        $attr = Yii::$app->request->get();
         $searchModel = new OrderSearch();
         $searchModel->validate();
-        $attr = Yii::$app->request->get();
-        $status = $attr['OrderSearch']['status'];
-        $countAllOrders = $searchModel->getAllOrdersCount();
-        $countServices = $searchModel->getCountServices();
-        $services = $searchModel->getServices();
+        $filterParams = $searchModel->getFilters($attr);
         $dataProvider = $searchModel->search($attr);
-        return $this->render('index', compact('searchModel', 'dataProvider', 'services', 'countServices', 'countAllOrders', 'status'));
+
+        return $this->render('index', compact('searchModel', 'dataProvider', 'filterParams'));
     }
 
 }

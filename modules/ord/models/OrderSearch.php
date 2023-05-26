@@ -138,4 +138,32 @@ class OrderSearch extends Order
     public function getServices() {
         return (new Query())->select(['id','name'])->from('services')->all();
     }
+
+    /**
+     * Get data for filters and views.
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function getFilters($attr) {
+        $status = $attr['OrderSearch']['status'];
+        $countAllOrders = $this->getAllOrdersCount();
+        $countServices = $this->getCountServices();
+        $services = $this->getServices();
+
+        $filterService = [];
+        $viewService = [];
+        foreach ($services as $service) {
+            $filterService[$service['id']] = '[' . $countServices[$service['id']-1]['cnt'] . '] ' . $service['name'];
+            $viewService[$service['id']] = '<span style="border:1px #777777 solid;">' . $countServices[$service['id']-1]['cnt'] . ' </span>' . $service['name'];
+        }
+        array_unshift($filterService, ['' => 'All (' . $countAllOrders . ')']);
+
+        return [
+                    'status' => $status,
+                    'filterService' => $filterService,
+                    'viewService' => $viewService,
+               ];
+    }
 }
