@@ -20,11 +20,10 @@ class OrderController extends Controller
      */
     public function actionIndex()
     {
+        $this->layout = '@app/modules/ord/views/layouts/main';
         $searchModel = new OrderSearch();
+        $searchModel->validate();
         $attr = Yii::$app->request->get();
-        if (!$searchModel->validate()) {
-            throw new HttpException(400);
-        }
         $status = $attr['OrderSearch']['status'];
         $countAllOrders = $searchModel->getAllOrdersCount();
         $countServices = $searchModel->getCountServices();

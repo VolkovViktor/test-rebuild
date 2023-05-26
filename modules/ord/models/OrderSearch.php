@@ -5,6 +5,7 @@ namespace app\modules\ord\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
+use yii\web\HttpException;
 
 /**
  * OrderSearch represents the model behind the search form of `app\modules\ord\models\Order`.
@@ -66,6 +67,12 @@ class OrderSearch extends Order
      */
     public function search($params)
     {
+        $this->load($params);
+
+        if (!$this->validate()) {
+            throw new HttpException(400);
+        }
+
         $status = $params['status'];
         $searchQueryParams = [0 => 'orders.id', 1 => 'users.last_name', 2 => 'users.first_name', 3 => 'link'];
 
@@ -85,16 +92,10 @@ class OrderSearch extends Order
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'id' => SORT_DESC, 
+                    'id' => SORT_DESC,
                 ]
             ],
         ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            return $dataProvider;
-        }
 
         $query->andFilterWhere([
             'id' => $this->id,
